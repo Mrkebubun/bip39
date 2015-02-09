@@ -2,11 +2,22 @@ var assert = require('assert')
 var crypto = require('crypto')
 var pbkdf2 = require('pbkdf2-compat').pbkdf2Sync
 var unorm = require('unorm')
+var sjcl = require('sjcl')
 
 var DEFAULT_WORDLIST = require('./wordlists/en.json')
 
 function mnemonicToSeed(mnemonic, password) {
-  return pbkdf2(mnemonic, salt(password), 2048, 64, 'sha512')
+  console.log('sjcl: ' + sjcl);
+  
+  var hmacSHA512 = function (key) {
+    var hasher = new sjcl.misc.hmac(key, sjcl.hash.sha512);
+    this.encrypt = function () {
+      return hasher.encrypt.apply(hasher, arguments);
+    };
+  };
+
+  var ret = sjcl.misc.pbkdf2(mnemonic, sjcl.codec.utf8String.toBits(salt(password)), 2048, 512, hmacSHA512);
+  return ret.toString(CryptoJS.enc.Hex);
 }
 
 function mnemonicToSeedHex(mnemonic, password) {
