@@ -4,7 +4,7 @@
   "description": "Bitcoin BIP39: Mnemonic code for generating deterministic keys",
   "main": "index.js",
   "scripts": {
-    "postinstall": "cd node_modules/sjcl && ./configure --with-sha1 && make && cd - && cp node_modules/sjcl/sjcl.js .",
+    "postinstall": "if [ -d 'node_modules/sjcl' ]; then cd node_modules/sjcl && ./configure --with-sha1 && make && cd - && cp node_modules/sjcl/sjcl.js .; fi",
     "test": "mocha --reporter list test/*.js",
     "compile": "browserify index.js -s bip39 > bip39.js"
   },
