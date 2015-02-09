@@ -7,8 +7,7 @@ var sjcl = require('sjcl')
 var DEFAULT_WORDLIST = require('./wordlists/en.json')
 
 function mnemonicToSeed(mnemonic, password) {
-  console.log('sjcl: ' + sjcl);
-  
+
   var hmacSHA512 = function (key) {
     var hasher = new sjcl.misc.hmac(key, sjcl.hash.sha512);
     this.encrypt = function () {
@@ -17,7 +16,7 @@ function mnemonicToSeed(mnemonic, password) {
   };
 
   var ret = sjcl.misc.pbkdf2(mnemonic, sjcl.codec.utf8String.toBits(salt(password)), 2048, 512, hmacSHA512);
-  return ret.toString(CryptoJS.enc.Hex);
+  return sjcl.codec.hex.fromBits(ret);;
 }
 
 function mnemonicToSeedHex(mnemonic, password) {
